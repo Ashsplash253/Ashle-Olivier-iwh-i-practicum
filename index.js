@@ -12,7 +12,22 @@ app.use(express.json());
 const hubspotApiKey = process.env.HUBSPOT_API_KEY;
 
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
+app.get('/', async (req, res) => {
+    const petsUrl = 'https://api.hubspot.com/crm/v3/objects/2-135469041';
+    const headers = {
+        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
 
+    try {
+        const response = await axios.get(petsUrl, { headers });
+        const data = response.data.results;
+        res.render('homepage', { title: 'My Pets | HubSpot APIs', data: data });
+    } catch (e) {
+        console.error('Error fetching CRM records:', e);
+        res.status(500).send('Error fetching CRM records');
+    }
+});
 // * Code for Route 1 goes here
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
