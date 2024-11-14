@@ -15,7 +15,7 @@ const hubspotApiKey = process.env.HUBSPOT_API_KEY;
 app.get('/', async (req, res) => {
     const petsUrl = 'https://api.hubspot.com/crm/v3/objects/2-135469041';
     const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+        Authorization: `Bearer ${hubspotApiKey}`,
         'Content-Type': 'application/json'
     };
 
@@ -29,7 +29,31 @@ app.get('/', async (req, res) => {
     }
 });
 // * Code for Route 1 goes here
+app.post('/update-cobj', async (req, res) => {
+    const { name, type, favourite_treat } = req.body;
+    const createPetUrl = 'https://api.hubspot.com/crm/v3/objects/2-135469041';
 
+    const headers = {
+        Authorization: `Bearer ${hubspotApiKey}`,
+        'Content-Type': 'application/json'
+    };
+
+    const newPetData = {
+        properties: {
+            name: name,
+            type: type,
+            favourite_treat: favourite_treat
+        }
+    };
+
+    try {
+        await axios.post(createPetUrl, newPetData, { headers });
+        res.redirect('/');
+    } catch (e) {
+        console.error('Error creating CRM record:', e);
+        res.status(500).send('Error creating CRM record');
+    }
+});
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 // * Code for Route 2 goes here
